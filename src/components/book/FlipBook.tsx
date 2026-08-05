@@ -172,6 +172,13 @@ export function FlipBook(_props: Props) {
 
   const [tocOpen, setTocOpen] = useState(false);
 
+  // Listen for programmatic open requests (from `openPortfolio()` helper)
+  useEffect(() => {
+    const handler = () => goTo(2);
+    window.addEventListener("openPortfolio", handler as EventListener);
+    return () => window.removeEventListener("openPortfolio", handler as EventListener);
+  }, [goTo]);
+
   const chapterLabels = useMemo(
     () => [
       "Cover",
@@ -210,12 +217,13 @@ export function FlipBook(_props: Props) {
   const currentLeftSheet = spread > 0 ? sheets[spread - 1] : undefined;
   const currentRightSheet = spread < sheets.length ? sheets[spread] : undefined;
 
-  const ctx = { onOpen: () => goTo(1), goTo: (i: number) => goTo(i) };
+  // open should reveal the first content spread (skip TOC on the left)
+  const ctx = { onOpen: () => goTo(2), goTo: (i: number) => goTo(i) };
 
   return (
-    <div className="relative flex h-full w-full flex-col items-center justify-center px-4 py-16 md:px-10">
+    <div className="relative flex h-full w-full flex-col items-center justify-center px-4 sm:px-6 py-8 sm:py-12 md:px-10 md:py-16">
       {/* Top bar */}
-      <header className="absolute inset-x-0 top-0 z-30 flex items-center justify-between px-6 py-5 md:px-10">
+      <header className="absolute inset-x-0 top-0 z-30 flex items-center justify-between px-4 sm:px-6 md:px-10 py-3 sm:py-4">
         <div className="font-display text-xs tracking-[0.35em] text-white/80 uppercase">
          Portfolio
         </div>
@@ -228,12 +236,8 @@ export function FlipBook(_props: Props) {
       </header>
 
       {/* Book */}
-      <div
-        className="relative w-full max-w-[1100px]"
-        style={{ perspective: 2400 }}
-      >
-        <div
-          className="relative mx-auto flex aspect-[16/10] max-h-[80dvh] w-full items-stretch"
+      <div className="relative w-full max-w-[1100px] sm:max-w-[720px]" style={{ perspective: 2400 }}>
+        <div className="relative mx-auto flex w-full items-stretch aspect-[4/5] sm:aspect-[3/4] md:aspect-[16/10] max-h-[80dvh] sm:max-h-[70dvh]"
           style={{
             transformStyle: "preserve-3d",
             transform: "rotateX(4deg)",
@@ -358,7 +362,7 @@ export function FlipBook(_props: Props) {
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
             transition={{ type: "spring", stiffness: 220, damping: 28 }}
-            className="glass fixed top-0 right-0 z-40 h-full w-72 p-8"
+            className="glass fixed top-0 right-0 z-40 h-full w-72 max-w-[90vw] p-6 sm:p-8"
           >
             <p className="text-[10px] tracking-[0.35em] text-cyan uppercase">
               Table of Contents
@@ -438,7 +442,7 @@ function PageSurface({
               : "linear-gradient(-90deg, transparent, rgba(0,0,0,0.25))",
         }}
       />
-      <div className="relative h-full w-full p-6 md:p-10">{children}</div>
+      <div className="relative h-full w-full p-4 sm:p-6 md:p-10">{children}</div>
     </div>
   );
 }
@@ -493,7 +497,7 @@ function FlipSheet({
           />
         )}
         <div className="pointer-events-none absolute inset-y-0 left-0 w-14 bg-gradient-to-r from-black/25 to-transparent" />
-        <div className="relative h-full w-full p-6 md:p-10">{sheet.front.render(ctx)}</div>
+        <div className="relative h-full w-full p-4 sm:p-6 md:p-10">{sheet.front.render(ctx)}</div>
       </div>
 
       {/* Back face (left side after flip) */}
@@ -520,7 +524,7 @@ function FlipSheet({
           />
         )}
         <div className="pointer-events-none absolute inset-y-0 right-0 w-14 bg-gradient-to-l from-black/25 to-transparent" />
-        <div className="relative h-full w-full p-6 md:p-10">{sheet.back.render(ctx)}</div>
+        <div className="relative h-full w-full p-4 sm:p-6 md:p-10">{sheet.back.render(ctx)}</div>
       </div>
     </motion.div>
   );

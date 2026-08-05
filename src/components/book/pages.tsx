@@ -6,6 +6,13 @@ import {useRef} from "react";
 import emailjs from "@emailjs/browser";
 import ResumePDF from "@/assets/Bushra Aman.pdf";
 
+// Programmatic helper to open the portfolio from other modules
+export function openPortfolio() {
+  if (typeof window !== "undefined") {
+    window.dispatchEvent(new CustomEvent("openPortfolio"));
+  }
+}
+
 function PageFrame({
   chapter,
   title,
@@ -53,7 +60,16 @@ export function CoverFront({ onOpen }: { onOpen: () => void }) {
       <p className="mt-6 max-w-xs text-sm text-white/50 italic">"{PROFILE.tagline}"</p>
 
       <motion.button
-        onClick={onOpen}
+        onClick={() => {
+          try {
+            onOpen();
+          } catch (e) {
+            /* ignore */
+          }
+          if (typeof window !== "undefined") {
+            window.dispatchEvent(new CustomEvent("openPortfolio"));
+          }
+        }}
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.96 }}
         className="btn-glow relative mt-10 rounded-full bg-gradient-to-r from-[#2563eb] to-[#38bdf8] px-6 py-2.5 text-xs font-semibold tracking-widest text-white uppercase"

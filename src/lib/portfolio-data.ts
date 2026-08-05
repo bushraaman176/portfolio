@@ -119,6 +119,13 @@ export const PROJECTS = [
     tech: ["React Native ", "TypeScript", "Tailwind CSS"],
     gradient: "from-fuchsia-500/40 to-blue-500/30",
   },
+  {
+    title: "Real Time Chat ",
+    description:
+      "A real-time chat application that enables seamless communication between users with a modern, responsive interface.",
+    tech: ["React  ", "TypeScript", "Tailwind CSS", "Framer Motion","webTrc","Firebase",],
+    gradient: "from-fuchsia-500/40 to-blue-500/30",
+  },
 ];
 
 export const SERVICES = [
